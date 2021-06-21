@@ -62,7 +62,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex )
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
                    
             
@@ -73,35 +73,44 @@ namespace StrettoFlatData.Processor
             string excelFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.dataFile);
             List<Flat> flatList = new List<Flat>();
 
-            if (!File.Exists(excelFile)) 
+            try
             {
-                Console.WriteLine(Messages.file_not_exists);
-                return flatList;
-            }
-
-            using (var reader = new StreamReader(excelFile))
-            {
-
-                using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+                if (!File.Exists(excelFile))
                 {
-                    try
-                    {
-                        csvReader.Read();
-                        csvReader.ReadHeader();
-                        flatList = csvReader.GetRecords<Flat>().ToList();
-                    }
-                    catch (CsvHelper.HeaderValidationException exception)
-                    {
-                        Console.WriteLine(exception.Message);
-                    }
-                    catch (Exception ex) 
-                    {
-                        Console.WriteLine(ex.Message);
-                        throw ex;
-                    }
+                    Console.WriteLine(Messages.file_not_exists);
                     return flatList;
                 }
+
+                using (var reader = new StreamReader(excelFile))
+                {
+
+                    using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    {
+                        try
+                        {
+                            csvReader.Read();
+                            csvReader.ReadHeader();
+                            flatList = csvReader.GetRecords<Flat>().ToList();
+                        }
+                        catch (CsvHelper.HeaderValidationException exception)
+                        {
+                            Console.WriteLine(exception.Message);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            throw ex;
+                        }
+                        return flatList;
+                    }
+                }
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
 
         }
 
@@ -118,7 +127,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 
@@ -126,10 +135,13 @@ namespace StrettoFlatData.Processor
         {
             try
             {
-                if (flatList != null && flatList.Count > 0)
+                if (flatList != null && flatList.Any())
                 {
                     //Filter 
-                    var objlist = flatList.GroupBy(x => x.city, (key, y) => y.OrderByDescending(z => z.sq__ft).First());
+                    
+                    var objlist = flatList                        
+                                    .Where(x =>x.type == Flat_Type.Residential.ToString())      
+                                    .GroupBy(x => x.city, (key, y) => y.OrderByDescending(z => z.sq__ft).First());
 
                     formatOutput(Constants.option2, objlist);
                    
@@ -139,7 +151,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 
@@ -148,12 +160,11 @@ namespace StrettoFlatData.Processor
             List<Flat> objList = new List<Flat>();
             try
             {
-                if (flatList != null && flatList.Count > 0)
+                if (flatList != null && flatList.Any())
                 {
-                   
-                    var flat = flatList.OrderByDescending(x => x.beds + x.baths).First();
+                    var flat = flatList.OrderByDescending(x => x.beds + x.baths).ThenBy(y => y.price).First();
                     if (flat != null) { objList.Add(flat); }                   
-                    formatOutput(Constants.option3, objList);                          
+                    formatOutput(Constants.option3, objList);                      
                    
                 }
 
@@ -161,7 +172,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 
@@ -190,7 +201,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 
@@ -215,7 +226,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
 
             return cityTax;
@@ -279,7 +290,7 @@ namespace StrettoFlatData.Processor
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
     }

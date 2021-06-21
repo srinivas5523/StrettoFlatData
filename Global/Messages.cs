@@ -18,7 +18,7 @@ namespace StrettoFlatData.Global
         public const string option4 = "4";
 
         public const string apiUri = "http://net-poland-interview-stretto.us-east-2.elasticbeanstalk.com/api/flats/taxes?city={0}";
-        //public const string dataFile = @"C:\Users\srini\source\repos\Data\Flats.csv";
+        
         public const string dataFile = @"Data\Flats.csv";
 
     }
@@ -37,5 +37,14 @@ namespace StrettoFlatData.Global
         public const string price = "Price:";
         public const string latitude = "latitude:";
         public const string longitude = "Longitude:";
+    }
+
+    public enum Flat_Type
+    {
+        Residential,
+        Condo,
+        Multi_Family,
+        Unkown
+
     }
 }
